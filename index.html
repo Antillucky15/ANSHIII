@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise 💝</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#b11226;
+    font-family:'Comic Sans MS', cursive;
+    padding:20px;
+    position:relative;
+    overflow:hidden;
+}
+
+/* BIGGER SLIDES */
+.slide{
+    width:min(430px,100%);
+    height:700px;
+    position:absolute;
+    opacity:0;
+    transform:translateY(20px);
+    pointer-events:none;
+    transition:all .6s ease;
+}
+
+.slide.active{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+}
+
+.notebook{
+    width:100%;
+    height:100%;
+    background:#fffafc;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    text-align:center;
+    overflow:hidden;
+}
+
+.pink{
+    color:#ff4d88;
+}
+
+.btn{
+    margin-top:18px;
+    padding:12px 28px;
+    border:none;
+    border-radius:25px;
+    background:#ff4d88;
+    color:white;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+}
+
+/* SONGS */
+.song{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:20px;
+    border:2px solid #ff4d88;
+    color:#ff4d88;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.song:hover{
+    background:#ff4d88;
+    color:white;
+}
+
+/* GIFT CARDS */
+.cards{
+    display:flex;
+    justify-content:space-between;
+    margin-top:15px;
+    gap:10px;
+}
+
+.card{
+    width:110px;
+    height:150px;
+    perspective:800px;
+    cursor:pointer;
+}
+
+.card-inner{
+    width:100%;
+    height:100%;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform 0.8s;
+}
+
+.card.open .card-inner{
+    transform:rotateY(180deg);
+}
+
+.card-face{
+    position:absolute;
+    inset:0;
+    border-radius:12px;
+    backface-visibility:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:8px;
+    text-align:center;
+    font-size:12px;
+}
+
+.card-front{
+    background:#ffe6ee;
+}
+
+.card-front img{
+    width:90%;
+}
+
+.card-back{
+    background:white;
+    transform:rotateY(180deg);
+    color:#ff4d88;
+    font-weight:bold;
+}
+
+/* FINAL LETTER IMPROVED */
+.letter{
+    text-align:left;
+    font-size:15px;
+    line-height:1.9;
+    color:#444;
+    height:520px;
+    overflow-y:auto;
+    padding-right:10px;
+    margin-top:10px;
+}
+
+.signature{
+    margin-top:25px;
+    text-align:right;
+    color:#ff4d88;
+    font-weight:bold;
+    font-size:16px;
+}
+
+/* ENVELOPE */
+.envelope-wrap{
+    margin-top:40px;
+    cursor:pointer;
+}
+
+.envelope{
+    width:240px;
+    height:150px;
+    margin:auto;
+    background:#ffb6c1;
+    border-radius:6px;
+    position:relative;
+}
+
+.envelope:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-left:120px solid transparent;
+    border-right:120px solid transparent;
+    border-top:75px solid #ff8fab;
+}
+
+.letter-paper{
+    position:absolute;
+    width:240px;
+    height:320px;
+    background:white;
+    left:0;
+    bottom:-320px;
+    border-radius:6px;
+    padding:14px;
+    font-size:13px;
+    color:#ff4d88;
+    transition:0.8s;
+    overflow-y:auto;
+    text-align:left;
+    line-height:1.6;
+}
+
+.envelope.open .letter-paper{
+    bottom:-150px;
+}
+
+#slide2Btn{
+    display:none;
+    margin-top:200px;
+}
+
+/* Interactive birthday cake — mobile-friendly */
+.cake-area{height:330px;display:flex;align-items:center;justify-content:center;position:relative;overflow:visible}
+.cake-scene{position:relative;width:min(100%,320px);height:300px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:30px}
+.cake-plate{position:absolute;bottom:19px;width:260px;max-width:90%;height:29px;border-radius:50%;background:linear-gradient(#fff,#f5bfd7);box-shadow:0 8px 16px #a72a6940;z-index:0}
+.cake{position:relative;width:216px;height:156px;margin-bottom:24px;cursor:pointer;touch-action:manipulation;z-index:2;filter:drop-shadow(0 10px 10px #9e386030)}
+.cake-half{position:absolute;top:0;width:108px;height:156px;overflow:hidden;transition:transform 1.15s cubic-bezier(.2,.75,.25,1);z-index:2}
+.left-half{left:0;border-radius:15px 0 0 13px}.right-half{right:0;border-radius:0 15px 13px 0}
+.cake-layer{position:absolute;left:0;width:216px;height:52px;border-bottom:5px solid #f9a1c4}
+.layer1{bottom:0;background:linear-gradient(110deg,#f9a4c5,#ffdae8,#f6a4c5)}
+.layer2{bottom:52px;background:linear-gradient(110deg,#ffd8a3,#fff0d1,#ffd4a0)}
+.layer3{bottom:104px;background:linear-gradient(110deg,#f7a1c9,#ffe0ec,#f49cc1)}
+.cake-top{position:absolute;top:-4px;left:0;width:216px;height:27px;background:linear-gradient(120deg,#fff6fa,#ffd5e6,#fff);border-radius:50%;z-index:3;box-shadow:0 4px 0 #f28ab7}
+.cake-icing{position:absolute;top:10px;left:0;width:216px;height:29px;background:repeating-linear-gradient(90deg,#fff0f6 0 23px,#ffe0ec 23px 38px);clip-path:polygon(0 0,100% 0,100% 55%,92% 55%,89% 100%,83% 55%,73% 55%,70% 94%,64% 55%,53% 55%,49% 95%,43% 55%,32% 55%,28% 100%,23% 55%,11% 55%,8% 94%,0 55%);z-index:3}
+.cake-berries{position:absolute;top:12px;left:0;width:216px;height:17px;z-index:4;background:radial-gradient(circle at 23px 9px,#ed477f 0 6px,transparent 7px),radial-gradient(circle at 75px 8px,#ed477f 0 6px,transparent 7px),radial-gradient(circle at 137px 8px,#ed477f 0 6px,transparent 7px),radial-gradient(circle at 188px 9px,#ed477f 0 6px,transparent 7px)}
+.cake.cut .left-half{transform:translateX(-39px) rotate(-6deg)}
+.cake.cut .right-half{transform:translateX(39px) rotate(6deg)}
+.candle{position:absolute;top:-66px;left:calc(50% - 8px);width:16px;height:57px;border-radius:4px;background:repeating-linear-gradient(140deg,#fff 0 9px,#f48cb9 9px 15px);box-shadow:inset -3px 0 #e5b3c9;z-index:8;cursor:pointer;transition:transform .6s,opacity .6s}
+.candle:before{content:'';position:absolute;left:7px;top:-7px;width:2px;height:8px;background:#53414a}
+.flame{position:absolute;left:-4px;top:-31px;width:24px;height:33px;background:radial-gradient(ellipse at 50% 67%,#fff9b2 0 22%,#ffb923 40%,#ff5b1d 70%,transparent 74%);border-radius:65% 35% 65% 35%;transform-origin:50% 95%;animation:cakeFlicker .75s ease-in-out infinite alternate;filter:drop-shadow(0 0 12px #ffb12d)}
+@keyframes cakeFlicker{from{transform:rotate(-8deg) scale(.93)}to{transform:rotate(8deg) scale(1.08)}}
+.candle.out .flame{opacity:0;animation:none;transition:opacity .3s}
+.cake.cut .candle{opacity:0;transform:translateY(15px)}
+.cake-smoke{position:absolute;left:50%;top:-90px;transform:translateX(-50%);opacity:0;pointer-events:none;font-size:29px;z-index:10}
+.cake-smoke.visible{animation:smokeFloat 1.5s ease-out forwards}
+@keyframes smokeFloat{0%{opacity:.7;transform:translate(-50%,10px) scale(.7)}100%{opacity:0;transform:translate(-50%,-55px) scale(1.5)}}
+.cake-knife{position:absolute;top:18px;right:5px;font-size:52px;z-index:12;opacity:0;transform:translate(45px,-55px) rotate(-50deg);pointer-events:none}
+.cake-knife.slicing{animation:knifeSlice 1.1s ease-in-out forwards}
+@keyframes knifeSlice{0%{opacity:0;transform:translate(45px,-55px) rotate(-50deg)}25%{opacity:1;transform:translate(0,-18px) rotate(-35deg)}65%{opacity:1;transform:translate(-68px,58px) rotate(-35deg)}100%{opacity:0;transform:translate(-100px,100px) rotate(-35deg)}}
+.cake-status{font-size:14px;color:#d44b82;min-height:24px;margin:0 0 10px;font-weight:600}
+#cakeBtn{display:none}
+@media(max-width:420px){.cake-area{height:315px}.cake-scene{transform:scale(.9);transform-origin:center bottom}}
+@media(prefers-reduced-motion:reduce){.flame{animation:none}.cake-half,.candle{transition:none}}
+.confetti{
+    position:fixed;
+    width:10px;
+    height:10px;
+    pointer-events:none;
+    z-index:9999;
+    animation:fall 3s linear forwards;
+}
+
+@keyframes fall{
+    from{
+        transform:translateY(-50px) rotate(0deg);
+        opacity:1;
+    }
+    to{
+        transform:translateY(100vh) rotate(720deg);
+        opacity:0;
+    }
+}.heart{
+    position:fixed;
+    color:#ff4d88;
+    font-size:22px;
+    pointer-events:none;
+    animation:floatHeart 6s linear forwards;
+    z-index:999;
+}
+
+@keyframes floatHeart{
+    from{
+        transform:translateY(0);
+        opacity:1;
+    }
+    to{
+        transform:translateY(-100vh);
+        opacity:0;
+    }
+}.popup{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+}
+
+.popup-box{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+    width:300px;
+    animation:pop .5s;
+}
+
+@keyframes pop{
+    from{
+        transform:scale(.5);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+
+/* Photo gallery */
+.gallery-shell{max-width:850px;width:100%;margin:0 auto;text-align:center}
+.gallery-photo{display:block;max-width:100%;width:auto;max-height:55vh;margin:12px auto;object-fit:contain;border:7px solid white;border-radius:14px;box-shadow:0 12px 35px #ad6a8d44;cursor:zoom-in}
+.gallery-actions{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin:15px auto}
+.gallery-counter{font-size:14px;color:#ac668c;min-width:48px}
+.gallery-caption{font-style:italic;color:#ae6388;margin:8px 0}
+.gallery-thumbs{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin:12px auto}
+.gallery-thumbs img{width:52px;height:65px;object-fit:cover;border-radius:7px;cursor:pointer;opacity:.7;border:2px solid white}
+.gallery-thumbs img.chosen{opacity:1;border-color:#ff4d88}
+#galleryLightbox{display:none;position:fixed;inset:0;z-index:100000;background:#140a14ee;align-items:center;justify-content:center;padding:20px}
+#galleryLightbox img{max-width:96vw;max-height:85vh;object-fit:contain}
+#galleryLightbox button{position:absolute;top:15px;right:15px}
+#s8 .notebook{max-width:900px;width:min(94vw,900px)}
+
+/* Mobile responsive layout: scroll within each slide instead of clipping content. */
+html { width:100%; min-height:100%; }
+body { width:100%; min-height:100vh; min-height:100dvh; padding:12px; overflow-x:hidden; overflow-y:auto; align-items:center; }
+.slide { position:relative; display:none; width:min(100%,430px); height:auto; min-height:0; max-height:none; margin:0 auto; opacity:0; transform:none; pointer-events:none; }
+.slide.active { display:block; opacity:1; transform:none; pointer-events:auto; animation:mobileSlideIn .4s ease both; }
+.notebook { height:auto; min-height:min(640px,calc(100dvh - 24px)); max-height:none; padding:clamp(14px,4vw,22px); overflow:visible; overflow-wrap:anywhere; }
+.letter { height:auto; max-height:none; overflow:visible; padding-right:0; }
+.cards { justify-content:center; flex-wrap:wrap; }
+.card { flex:0 1 110px; max-width:31%; min-width:85px; }
+.card-front img { max-width:100%; max-height:100%; object-fit:cover; border-radius:8px; }
+.btn,button { max-width:100%; min-height:42px; touch-action:manipulation; }
+#s8 { width:min(100%,850px); }
+#s8 .notebook { width:100%; max-width:100%; }
+.gallery-photo { max-height:min(47dvh,440px); max-width:100%; }
+.gallery-thumbs img { width:clamp(38px,10vw,52px); height:clamp(48px,13vw,65px); }
+.gallery-actions { gap:7px; }
+.gallery-actions .btn { padding:10px 13px; font-size:13px; }
+#galleryLightbox { max-width:100vw; max-height:100dvh; }
+@keyframes mobileSlideIn { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
+@media (max-width:390px) {
+ body { padding:8px; }
+ .notebook { padding:14px 11px; min-height:calc(100dvh - 16px); }
+ .card { min-width:82px; height:145px; }
+ .card-face { padding:5px; font-size:10px; }
+ .envelope { max-width:100%; }
+ .gallery-photo { max-height:42dvh; }
+}
+@media (max-height:620px) { .notebook { min-height:0; } .gallery-photo { max-height:45dvh; } }
+@media (prefers-reduced-motion:reduce) { .slide.active { animation:none; } }
+
+</style>
+</head>
+
+<body>
+
+<!-- SLIDE 1 -->
+<div class="slide active" id="s1">
+<div class="notebook">
+
+<div style="font-size:50px;">🐱</div>
+
+<h2 class="pink">Happy Birthday!</h2>
+
+<div class="pink" style="font-size:20px;font-weight:bold;">
+Happy Birthday My Cutuu💖🎂
+</div>
+
+<p style="margin-top:20px;">
+Today is all about celebrating the most amazing person in my world.
+</p>
+
+<div class="pink">
+<b>Ready for ur birthday surprise?</b>
+</div>
+
+<button class="btn" onclick="go(2)">
+Let’s Go 💖
+</button>
+
+</div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide" id="s2">
+<div class="notebook">
+
+<p style="font-size:18px;">💌 A little letter just for you...</p>
+
+<div class="envelope-wrap" onclick="openEnvelope()">
+
+<div class="envelope" id="env">
+
+<div class="letter-paper">
+
+<b>Happy Birthday, ANSHiiii ❤️</b><br><br>
+
+Today is all about you — your smile, your kindness, and the beautiful person you are. You deserve all the happiness, love, and peace in this world.<br><br>
+
+You’re one of the most beautiful parts of my life, and I’m so lucky to have you. Your smile, your little things, and the way you are make you so special to me. 🫶🏻❤️ I wish you endless happiness, success, and all the love you deserve. Never stop smiling, because your happiness means so much to me. 💗<br><br>
+
+Happy birthday to the most special girl my bestiee 🥀 .ik uncle and aunty had a great valentine week . tbi toh unhone ek apsara ko jnam doya on a special date 23rd nov yeahhh . enjoy ur day bby 💓
+
+I wish I could give you all the happiness in the world because you deserve nothing less than the best. I hope you always keep smiling, achieve everything you dream of, and never forget how special you are. 🧿❤️
+
+Thank you for being a part of my life. I may not be perfect. I want to see you grow, succeed, and be happy, and I hope I can be a part of all your beautiful moments. 🫂💋
+
+**Happy Birthday, my Love  ❤️🎀**
+You will always be someone very special to me. I love you so much. 🫶🏻💌<br><br>
+
+Yours,<br>
+Lucky ❤️
+
+</div>
+</div>
+</div>
+
+<button id="slide2Btn" class="btn" onclick="go(3)">
+Continue 💕
+</button>
+
+</div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide" id="s4">
+<div class="notebook">
+
+<h2 class="pink">
+🎂 Cut Your Birthday Cake
+</h2>
+
+<p>First blow the candle, then tap the cake 💖</p>
+
+<div class="cake-area">
+<div class="cake-scene">
+<div class="cake-plate"></div>
+<div class="cake-knife" id="cakeKnife" aria-hidden="true">🔪</div>
+<div class="cake" id="cake" onclick="cutCake()" role="button" tabindex="0" aria-label="Cut the cake after blowing out the candle" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cutCake()}">
+<div class="cake-smoke" id="cakeSmoke" aria-hidden="true">☁️</div>
+<div class="candle" id="candle" onclick="blowCandle(event)" role="button" aria-label="Blow out the candle"><div class="flame"></div></div>
+<div class="cake-half left-half"><div class="cake-layer layer1"></div><div class="cake-layer layer2"></div><div class="cake-layer layer3"></div><div class="cake-icing"></div><div class="cake-top"></div><div class="cake-berries"></div></div>
+<div class="cake-half right-half"><div class="cake-layer layer1"></div><div class="cake-layer layer2"></div><div class="cake-layer layer3"></div><div class="cake-icing"></div><div class="cake-top"></div><div class="cake-berries"></div></div>
+</div>
+</div>
+</div>
+<p class="cake-status" id="cakeStatus" aria-live="polite">🕯️ Tap the candle to blow it out</p>
+
+<button id="cakeBtn" class="btn" onclick="go(5)">
+Make a Wish ✨
+</button>
+
+</div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide" id="s5">
+<div class="notebook">
+
+<h2>It’s cake time 🎂</h2>
+
+<h2 class="pink">
+Make your wish come true ✨
+</h2>
+
+<p style="margin-top:20px;">
+Close your eyes and make your birthday wish 💖
+</p>
+
+<button class="btn" onclick="go(6)">
+I have made my wish 💕
+</button>
+
+</div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide" id="s3">
+<div class="notebook">
+
+<h2 class="pink">
+Choose your birthday soundtrack 🎶
+</h2>
+
+<div class="pink">
+<b>Now playing:</b>
+</div>
+
+<div id="nowPlaying" class="pink" style="margin-bottom:20px;">
+None
+</div>
+
+<div class="song" onclick="playMusic('pyari-amaanat.mp3','Pyari Amaanat')">
+💕 Pyari Amaanat
+</div>
+
+<div class="song" onclick="playMusic('tere-jeha.mp3','Tere Jeha')">
+✨ Tere Jeha
+</div>
+
+<div class="song" onclick="playMusic('crazy4u.mp3','Crazy4U')">
+🎉 Crazy4U
+</div>
+
+<button class="btn" onclick="go(4)">
+Continue to Cake 🎂
+</button>
+
+</div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide" id="s6">
+<div class="notebook">
+
+<h2 class="pink">
+Special gifts just for you 🎁
+</h2>
+
+<div class="cards">
+
+<div class="card" onclick="openCard(this)">
+<div class="card-inner">
+
+<div class="card-face card-front">
+<img src="mahi1.png">
+</div>
+
+<div class="card-face card-back">
+Happiest bday to my malkin 🫡 auro ki jalad hogi meri toh pyaari🥰 
+</div>
+
+</div>
+</div>
+
+<div class="card" onclick="openCard(this)">
+<div class="card-inner">
+
+<div class="card-face card-front">
+<img src="mahi2.png">
+</div>
+
+<div class="card-face card-back">
+ik hm sb krenge sth main jo decide kiya h travel unlimited backchodi 😋
+</div>
+
+</div>
+</div>
+
+<div class="card" onclick="openCard(this)">
+<div class="card-inner">
+
+<div class="card-face card-front">
+<img src="mahi3.png">
+</div>
+
+<div class="card-face card-back">
+aur hn tu londoan jari h juru ok woh bhi uncle aur our sweet mummy ji k sth 🤞🏻🧿
+</div>
+
+</div>
+</div>
+
+</div>
+
+<button id="finalBtn" class="btn" style="display:none;" onclick="go(8)">
+Open photo gallery 📸
+</button>
+
+</div>
+</div>
+
+
+<!-- PHOTO GALLERY SLIDE -->
+<div class="slide" id="s8"><div class="notebook gallery-shell">
+<h2 class="pink">📸 A Little Photo Gallery ♡</h2>
+<p>Little moments, lovely memories 💖</p>
+<img id="galleryMain" class="gallery-photo" src="gallery1.png" alt="Photo gallery" onclick="openGalleryPhoto()">
+<div id="galleryCaption" class="gallery-caption">That smile says everything ✨</div>
+<div class="gallery-actions">
+<button class="btn" onclick="galleryMove(-1)">← Previous</button>
+<span id="galleryCounter" class="gallery-counter">1 / 9</span>
+<button class="btn" onclick="galleryMove(1)">Next →</button>
+</div>
+<div id="galleryThumbs" class="gallery-thumbs"></div>
+<button class="btn" onclick="go(7)">Open final birthday letter 💗</button>
+</div></div>
+<div id="galleryLightbox" onclick="closeGalleryPhoto()"><button class="btn" onclick="closeGalleryPhoto()">✕ Close</button><img id="galleryLarge" alt="Expanded photo"></div>
+
+<!-- SLIDE 7 -->
+<div class="slide" id="s7">
+<div class="notebook">
+
+<h2 class="pink">
+💌 Final Birthday Letter
+</h2>
+
+<div class="letter">
+
+<p>
+My dearest, lovely dovely cutuu 💖
+</p>
+
+<p>
+May this year bring you joy, everything your heart desires,
+and more happiness & blessings than you can imagine.
+</p>
+
+<p>
+Happiest birthday anshiii... ik ham random mile insta pa jab mene request beji phela lga kha accept kregi fir tune accept bhi ki baat bhi ki or genuine tu etni sweet h na bs. baki tu hamesha kush rhe ghume fere.
+</p>
+
+<p>
+Mena kbi socha bhi ni tha ki tu meri friend bnegi but unfortunately now we are i m very happy today if i were there to u we will celebrate ur brday more beautiful i try to make ur day more n more special which u dont want to forget . sometime i think uncle and aunty are bakers bcz they made such a cutiee sweetie piee 😋🫶🏻 
+</p>
+
+<p>
+may u like my gifts and u always try to be a good friend ik sometimes i make u angry do silly things kch bhi bol deta hun bina soche but u r always be my best friend 🧿🤞🏻 
+HAPPYY BIRTHDAYY ANSHHIII..(MY CHAMPAKALI/KAMMO JI).
+</p>
+
+<div class="signature">
+Your Friend,<br>
+(Gohchuu) 💖
+</div>
+
+</div>
+</div>
+</div>
+
+<audio id="bgMusic" loop></audio>
+
+<script>
+let opened = 0;
+let candleBlown = false;
+
+let music = document.getElementById("bgMusic");
+let nowPlaying = document.getElementById("nowPlaying");
+
+function go(n){
+window.scrollTo({top:0,behavior:"instant"});
+
+
+document.querySelectorAll('.slide').forEach(s=>{
+s.classList.remove('active');
+});
+
+document.getElementById('s'+n).classList.add('active');
+
+if(n===7){
+startHearts();
+showBirthdayPopup();
+}
+}
+
+function playMusic(src,name){
+
+music.pause();
+music.src = src;
+music.load();
+
+nowPlaying.innerText = "Loading: " + name + "…";
+
+music.play().then(()=>{
+    nowPlaying.innerText = "Playing: " + name + " 🎶";
+}).catch((error)=>{
+    console.error("Audio playback error:", error);
+    nowPlaying.innerText = "Couldn't play " + name + ". Check that the MP3 file is uploaded beside index.html.";
+});
+}
+
+function openCard(card){
+
+if(!card.classList.contains('open')){
+
+card.classList.add('open');
+
+opened++;
+
+if(opened===3){
+document.getElementById('finalBtn').style.display="inline-block";
+}
+}
+}
+
+function openEnvelope(){
+
+document.getElementById("env").classList.add("open");
+
+document.getElementById("slide2Btn").style.display="inline-block";
+}
+
+function blowCandle(e){
+ if(e)e.stopPropagation();
+ if(candleBlown)return;
+ candleBlown=true;
+ document.getElementById('candle').classList.add('out');
+ document.getElementById('cakeSmoke').classList.add('visible');
+ document.getElementById('cakeStatus').textContent='✨ Wish made! Now tap the cake to cut it 🎂';
+}
+function cutCake(){
+ if(!candleBlown){document.getElementById('cakeStatus').textContent='🕯️ Blow out the candle first!';return;}
+ const cake=document.getElementById('cake');
+ if(cake.classList.contains('cut')||cake.classList.contains('cutting'))return;
+ cake.classList.add('cutting');
+ document.getElementById('cakeStatus').textContent='🍰 Cutting your birthday cake...';
+ document.getElementById('cakeKnife').classList.add('slicing');
+ setTimeout(()=>{
+  cake.classList.add('cut');cake.classList.remove('cutting');
+  document.getElementById('cakeStatus').textContent='🎉 Happy Birthday! Your cake is ready! 💖';
+  launchConfetti();
+  setTimeout(()=>{document.getElementById('cakeBtn').style.display='inline-block';},450);
+ },850);
+}
+function launchConfetti(){
+
+for(let i=0;i<120;i++){
+
+let c=document.createElement("div");
+
+c.className="confetti";
+
+c.style.left=Math.random()*100+"vw";
+
+c.style.background=
+["#ff4d88","#ffd700","#7cf29c","#87ceeb","#ffffff"]
+[Math.floor(Math.random()*5)];
+
+document.body.appendChild(c);
+
+setTimeout(()=>{
+c.remove();
+},3000);
+
+}
+
+}
+
+let heartInterval;
+
+function startHearts(){
+
+if(heartInterval) return;
+
+heartInterval=setInterval(()=>{
+
+let h=document.createElement("div");
+
+h.className="heart";
+
+h.innerHTML="💖";
+
+h.style.left=Math.random()*100+"vw";
+
+h.style.bottom="-20px";
+
+document.body.appendChild(h);
+
+setTimeout(()=>{
+h.remove();
+},6000);
+
+},400);
+
+}
+
+function showBirthdayPopup(){
+
+if(document.getElementById("birthdayPopup"))
+return;
+
+let popup=document.createElement("div");
+
+popup.id="birthdayPopup";
+
+popup.className="popup";
+
+popup.innerHTML=`
+<div class="popup-box">
+
+<h2 style="color:#ff4d88;">
+🎉 Happy Birthday ANSHIIKA 🎂
+</h2>
+
+<p>
+May your smile never fade and all your wishes come true 💖
+</p>
+
+<button class="btn"
+onclick="document.getElementById('birthdayPopup').remove()">
+Aww Thank You 💕
+</button>
+
+</div>
+`;
+
+document.body.appendChild(popup);
+
+}
+
+const galleryCaptions=["That smile says everything ✨","A little mirror moment 🌼","Elegance in blue 💙","A soft little moment","A pretty picture, a pretty memory","A smile worth saving 🤍","Those glasses, that grin","A little sparkle ✨","Little Mahi, big memories 🧸"];
+let galleryIndex=0;
+function galleryShow(i){galleryIndex=(i+9)%9;document.getElementById('galleryMain').src='gallery'+(galleryIndex+1)+'.png';document.getElementById('galleryCaption').textContent=galleryCaptions[galleryIndex];document.getElementById('galleryCounter').textContent=(galleryIndex+1)+' / 9';document.querySelectorAll('#galleryThumbs img').forEach((el,j)=>el.classList.toggle('chosen',j===galleryIndex));}
+function galleryMove(delta){galleryShow(galleryIndex+delta)}
+function openGalleryPhoto(){document.getElementById('galleryLarge').src=document.getElementById('galleryMain').src;document.getElementById('galleryLightbox').style.display='flex'}
+function closeGalleryPhoto(){document.getElementById('galleryLightbox').style.display='none'}
+for(let i=0;i<9;i++){let im=document.createElement('img');im.src='gallery'+(i+1)+'.png';im.alt='Photo '+(i+1);im.onclick=()=>galleryShow(i);document.getElementById('galleryThumbs').appendChild(im)}
+galleryShow(0);
+document.addEventListener('keydown',e=>{if(document.getElementById('galleryLightbox').style.display==='flex'){if(e.key==='Escape')closeGalleryPhoto();return}if(document.getElementById('s8').classList.contains('active')){if(e.key==='ArrowRight')galleryMove(1);if(e.key==='ArrowLeft')galleryMove(-1)}});
+</script>
+
+</body>
+</html>

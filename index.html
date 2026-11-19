@@ -806,7 +806,7 @@ document.body.appendChild(popup);
 
 }
 
-const galleryCaptions=["That smile says everything ✨","A little mirror moment 🌼","Elegance in blue 💙","A soft little moment","A pretty picture, a pretty memory","A smile worth saving 🤍","Those glasses, that grin","A little sparkle ✨","Little Mahi, big memories 🧸"];
+const galleryCaptions=["That smile says everything ✨","A little mirror moment 🌼","Elegance in blue 💙","A soft little moment","A pretty picture, a pretty memory","A smile worth saving 🤍","Those glasses, that grin","A little sparkle ✨","Little Anshiiiii, big memories 🧸"];
 let galleryIndex=0;
 function galleryShow(i){galleryIndex=(i+9)%9;document.getElementById('galleryMain').src='gallery'+(galleryIndex+1)+'.png';document.getElementById('galleryCaption').textContent=galleryCaptions[galleryIndex];document.getElementById('galleryCounter').textContent=(galleryIndex+1)+' / 9';document.querySelectorAll('#galleryThumbs img').forEach((el,j)=>el.classList.toggle('chosen',j===galleryIndex));}
 function galleryMove(delta){galleryShow(galleryIndex+delta)}
